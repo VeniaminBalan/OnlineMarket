@@ -15,6 +15,14 @@ builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("_specificOrigin",
+        p => p.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +31,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("_specificOrigin");
 
 app.UseHttpsRedirection();
 
