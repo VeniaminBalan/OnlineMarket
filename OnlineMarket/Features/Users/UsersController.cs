@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineMarket.DataBase;
 using OnlineMarket.Features.Roles.Models;
 using OnlineMarket.Features.Roles.Views;
 using OnlineMarket.Features.Users.Models;
+using OnlineMarket.Features.Users.Utils;
 using OnlineMarket.Features.Users.Views;
 
 namespace OnlineMarket.Features.Users;
@@ -22,8 +26,16 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserResponse>> Add( UserRequest request)
     {
-        var role = _appDbContext.Roles.FirstOrDefault(r => r.Name == "Customer");
+        var role = await _appDbContext.Roles.FirstOrDefaultAsync(r => r.Name == "Customer");
         if (role is null) return NotFound("Member not found");
+        
+        var  existingUser = await _appDbContext.Users.FirstOrDefaultAsync(r=> r.Email == request.Email);
+        if (existingUser is not null) return BadRequest("User already exists with that email");
+        
+        existingUser = await _appDbContext.Users.FirstOrDefaultAsync(r=> r.Name == request.Name);
+        if (existingUser is not null) return BadRequest("User already exists with that name");
+
+        HashPassword hashedPassword = new HashPassword(request.Password);
 
         var user = new UserModel
         {
@@ -32,8 +44,8 @@ public class UsersController : ControllerBase
             Updated = DateTime.UtcNow,
             Name = request.Name,
             Email = request.Email,
-            Salt = request.Password,
-            Hashed = request.Password,
+            Salt = hashedPassword.GetSalt(),
+            Hashed = hashedPassword.GetHashed(),
             Roles = new List<RoleModel>
             {
                 role
@@ -60,7 +72,8 @@ public class UsersController : ControllerBase
 
         return Created("user", res);
     }
-
+    
+    /*
     [HttpGet]
     public async Task<ActionResult<UserResponse>> Get()
     {
@@ -83,9 +96,39 @@ public class UsersController : ControllerBase
             }).ToListAsync();
 
         return Ok(users);
+    }*/
+
+    [HttpGet]
+    public async Task<ActionResult<UserResponse>> Get(string Email, string Password)
+    {
+        var user = await _appDbContext.Users
+            .Include(x => x.Roles)
+            .FirstOrDefaultAsync(user => user.Email == Email);
+
+        if (user is null) return BadRequest("Email or password are incorect");
+
+        if (!HashPassword.isValid(Password, user.Salt, user.Hashed))
+            return BadRequest("Password is incorect");
+
+        var res = new UserResponse
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            Roles = user.Roles.Select(role => new RoleResponseForUser
+                {
+                    Id = role.Id,
+                    Name = role.Name,
+                    Description = role.Description
+                }
+            ).ToList()
+
+        };
+
+        return res;
     }
-    
-    [HttpPost("{id}")]
+
+    [HttpPut("{id}")]
     public async Task<ActionResult<UserResponse>> AddSellerRole([FromRoute] string id)
     {
         var user = await _appDbContext.Users.Include(x => x.Roles).FirstOrDefaultAsync(x => id == x.Id);
