@@ -23,7 +23,8 @@ public class TicketsController : ControllerBase
     [HttpPost("{Id}")]
     public async Task<ActionResult<TicketResponse>> Add([FromRoute]string Id)
     {
-        var user = await _appDbContext.Tickets.FirstOrDefaultAsync(t=>);
+        var user = await _appDbContext.Tickets.FirstOrDefaultAsync(t=>t.UserId == Id);
+        if (user is not null) return BadRequest("this user have sent already seller request");
         
         var ticket = new TicketModel
         {
@@ -42,5 +43,20 @@ public class TicketsController : ControllerBase
             UserId = ticket.UserId
         };
         return Ok(res);
+    }
+
+    [HttpGet("{Id}")]
+    public async Task<ActionResult<TicketResponse>> Get()
+    {
+        var tickets = await _appDbContext.Tickets
+            .Select(ticket => new TicketResponse
+            {
+                Id = ticket.Id,
+                ProcessedDate = ticket.ProcessedDate,
+                isProcessed = ticket.isProcessed,
+                UserId = ticket.UserId
+            }).ToListAsync();
+
+        return Ok(tickets);
     }
 }

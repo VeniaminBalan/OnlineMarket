@@ -73,31 +73,6 @@ public class UsersController : ControllerBase
         return Created("user", res);
     }
     
-    /*
-    [HttpGet]
-    public async Task<ActionResult<UserResponse>> Get()
-    {
-        var users = await _appDbContext.Users
-            .Include(x => x.Roles)
-            .Select(
-            user => new UserResponse
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Roles = user.Roles.Select(
-                    role => new RoleResponseForUser
-                    {
-                        Id = role.Id,
-                        Name = role.Name,
-                        Description = role.Description
-                    }
-                ).ToList()
-            }).ToListAsync();
-
-        return Ok(users);
-    }*/
-
     [HttpGet]
     public async Task<ActionResult<UserResponse>> Get(string Email, string Password)
     {
