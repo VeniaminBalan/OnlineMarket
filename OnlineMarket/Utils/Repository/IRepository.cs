@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using OnlineMarket.Base;
 
-namespace OnlineMarket.Utils.Repository;
+namespace StudentUptBackend.Database;
 
-public interface IRepository<T> where T : class, IModel // CRUD Repository
+public interface IRepository<T> where T : class, IModel
 {
-    public DbSet<T> DbSet { get; set; }
-    //Create
-    public Task<ActionResult<T>> Add(T request);
-    //Read
-    public Task<ActionResult<IEnumerable<T>>> Get();
-    public Task<ActionResult<T>> Get(string id);
-    //Update
-    public Task<ActionResult<T>> Update(string id, object request);
-    //Delete
-    public Task<ActionResult<T>> Delete(string id);
+    DbSet<T> DbSet { get; }
+    Task<T> AddAsync([NotNull] T entity);
+    Task<T?> GetAsync(string id);
+    Task<IEnumerable<T>> GetAsync();
+    Task<T?> AddOrUpdateAsync([NotNull] T entity);
+    Task<T?> UpdateAsync(string id ,object entity);
+    Task<T?> DeleteAsync(string id);
+    Task<IEnumerable<T>> DeleteAsync(IEnumerable<string> ids);
 }

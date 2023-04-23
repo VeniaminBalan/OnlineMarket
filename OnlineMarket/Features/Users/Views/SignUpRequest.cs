@@ -3,7 +3,7 @@ using OnlineMarket.Features.Roles.Models;
 
 namespace OnlineMarket.Features.Users.Views;
 
-public class UserRequest
+public class SignUpRequest
 {
     
     [Required]public string Name { get; set; }

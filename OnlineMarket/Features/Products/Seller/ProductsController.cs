@@ -3,22 +3,24 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMarket.DataBase;
 using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
+using OnlineMarket.Features.Users.Views;
 
 namespace OnlineMarket.Features.Products;
 
 [ApiController]
-[Route("products")]
-public class ProductsController : ControllerBase
+[Route("products/seller")]
+public class CustomerProductsController : ControllerBase
 {
     private readonly AppDbContext _appDbContext;
 
-    public ProductsController(AppDbContext appDbContext)
+    public CustomerProductsController(AppDbContext appDbContext)
     {
         _appDbContext = appDbContext;
     }
     
-    [HttpPost]
-    public async Task<ActionResult<ProductsResponse>> Add(string sellerId, ProductsRequest request)
+    //post a product by seller
+    [HttpPost("{sellerId}")]
+    public async Task<ActionResult<ProductsResponse>> Add([FromRoute]string sellerId, ProductsRequest request)
     {
         var user = await _appDbContext.Users
             .Include(u => u.Roles)
@@ -30,10 +32,6 @@ public class ProductsController : ControllerBase
         
         var product = new ProductModel
         {
-            Id = Guid.NewGuid().ToString(),
-            Created = DateTime.UtcNow,
-            Updated = DateTime.UtcNow,
-            
             Seller = user,
             Name = request.Name,
             Description = request.Description,
@@ -57,18 +55,23 @@ public class ProductsController : ControllerBase
             Price = product.Price,
             Quantity = product.Quantity,
             Display = product.Display,
-            Comments = product.Comments
-            
+            Comments = null
         };
         
     }
+
     
-    [HttpGet]
-    public async Task<ActionResult<ProductsResponse>> Get()
+    //get all seller's products
+    [HttpGet("{SellerId}")]
+    public async Task<ActionResult<ProductsResponse>>  Get([FromRoute] string SellerId)
     {
-        var products = await _appDbContext.Products
-            .Include(s => s.Seller).ToListAsync();
+        var products = _appDbContext.Products
+            .Include(s=>s.Seller)
+            .Where(p => p.Seller.Id == SellerId);
         
+        if(products is null) NotFound("Product does not exist");
+
+
         var res = products.Select(p => new ProductsResponse
         {
             Id = p.Id,
@@ -78,32 +81,13 @@ public class ProductsController : ControllerBase
             Price = p.Price,
             Quantity = p.Quantity,
             Display = p.Display,
-            Seller = p.Seller
+            Seller = new UserResponseForProducts
+            {
+                Id = p.Seller.Id,
+                Email = p.Seller.Email,
+                Name = p.Seller.Name
+            }
         });
-
-        return Ok(res);
-    }
-    
-    [HttpGet("{Id}")]
-    public async Task<ActionResult<ProductsResponse>>  Get([FromRoute] string Id)
-    {
-        var product = _appDbContext.Products
-            .Include(s=>s.Seller)
-            .FirstOrDefault(p => p.Id == Id);
-        if(product is null) NotFound("Product does not exist");
-
-
-        var res = new ProductsResponse
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Description = product.Description,
-            IsNegotiable = product.IsNegotiable,
-            Price = product.Price,
-            Quantity = product.Quantity,
-            Display = product.Display,
-            Seller = product.Seller
-        };
 
         return Ok(res);
     }

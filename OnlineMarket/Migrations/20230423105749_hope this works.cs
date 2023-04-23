@@ -5,29 +5,29 @@
 namespace OnlineMarket.Migrations
 {
     /// <inheritdoc />
-    public partial class @new : Migration
+    public partial class hopethisworks : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Users_Roles_RoleModelId",
-                table: "Users");
+                name: "FK_Roles_Users_UserModelId",
+                table: "Roles");
 
             migrationBuilder.DropIndex(
-                name: "IX_Users_RoleModelId",
-                table: "Users");
+                name: "IX_Roles_UserModelId",
+                table: "Roles");
 
             migrationBuilder.DropColumn(
-                name: "RoleModelId",
-                table: "Users");
+                name: "UserModelId",
+                table: "Roles");
 
             migrationBuilder.CreateTable(
                 name: "RoleModelUserModel",
                 columns: table => new
                 {
-                    RolesId = table.Column<string>(type: "text", nullable: false),
-                    UsersId = table.Column<string>(type: "text", nullable: false)
+                    RolesId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    UsersId = table.Column<string>(type: "varchar(255)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,8 @@ namespace OnlineMarket.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleModelUserModel_UsersId",
@@ -59,21 +60,21 @@ namespace OnlineMarket.Migrations
                 name: "RoleModelUserModel");
 
             migrationBuilder.AddColumn<string>(
-                name: "RoleModelId",
-                table: "Users",
-                type: "text",
+                name: "UserModelId",
+                table: "Roles",
+                type: "varchar(255)",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleModelId",
-                table: "Users",
-                column: "RoleModelId");
+                name: "IX_Roles_UserModelId",
+                table: "Roles",
+                column: "UserModelId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Users_Roles_RoleModelId",
-                table: "Users",
-                column: "RoleModelId",
-                principalTable: "Roles",
+                name: "FK_Roles_Users_UserModelId",
+                table: "Roles",
+                column: "UserModelId",
+                principalTable: "Users",
                 principalColumn: "Id");
         }
     }

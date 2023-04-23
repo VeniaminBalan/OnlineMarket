@@ -5,24 +5,18 @@
 namespace OnlineMarket.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class somethingwrongwithroles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "IsInChart",
-                table: "Charts",
-                newName: "IsBought");
+
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "IsBought",
-                table: "Charts",
-                newName: "IsInChart");
+
         }
     }
 }

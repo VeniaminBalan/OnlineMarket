@@ -1,19 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineMarket.DataBase;
-using OnlineMarket.Utils.Mappers;
+using StudentUptBackend.Database;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var connectionString = builder.Configuration.GetConnectionString("Default");
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(typeof(MappingProfiles));
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("mySql"); // use "mySql" for deploy
+builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString)); // "UseMySQL" for deploy
 
 builder.Services.AddCors(o =>
 {
