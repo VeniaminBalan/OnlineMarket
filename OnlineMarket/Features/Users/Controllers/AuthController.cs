@@ -33,9 +33,6 @@ public class AuthController : ControllerBase
         var existingUser = await userRepo.DbSet.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (existingUser is not null) return BadRequest("User already exists with that email");
 
-        existingUser = await userRepo.DbSet.FirstOrDefaultAsync(u => u.Name == request.Name);
-        if (existingUser is not null) return BadRequest("User already exists with that name");
-        
         HashPassword hashedPassword = new HashPassword(request.Password);
 
         var user = new UserModel
