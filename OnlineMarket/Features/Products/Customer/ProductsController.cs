@@ -29,6 +29,7 @@ public class ProductsController : ControllerBase
     {
         var products = await productRepo.DbSet
             .Include(s => s.Seller)
+            .Where(p=>p.Display == true)
             .ToListAsync();
         
         var res = products.Select(p => new ProductsResponse
@@ -80,52 +81,6 @@ public class ProductsController : ControllerBase
         };
 
         return Ok(res);
-    }
-
-    [HttpPatch("{Id}")]
-    public async Task<ActionResult<ProductsResponse>> Update([FromRoute]string Id, ProductsRequestForPatch request)
-    {
-        if (request.Name == "string" || request.Name == "") request.Name = null;
-        if (request.Description == "string" || request.Description == "") request.Description = null;
-
-        var product = await productRepo.UpdateAsync(Id, request);
-        if (product is null) return NotFound("product not found");
-
-        product = await productRepo.DbSet
-            .Include(p => p.Seller)
-            .Include(p => p.Comments)
-            .ThenInclude(c=>c.User)
-            .FirstOrDefaultAsync(p => p.Id == Id);
-
-        var ret = new ProductsResponse
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Description = product.Description,
-            IsNegotiable = product.IsNegotiable,
-            Price = product.Price,
-            Quantity = product.Quantity,
-            Display = product.Display,
-            Seller = new UserResponseForProducts
-            {
-                Id = product.Seller.Id,
-                Email = product.Seller.Email,
-                Name = product.Seller.Name
-            },
-            Comments = product.Comments.Select(c=> new CommentResponseForProduct
-            {
-                Id = c.Id,
-                Text = c.Text,
-                User = new UserResponseForProducts
-                {
-                    Id = c.User.Id,
-                    Email = c.User.Email,
-                    Name = c.User.Name
-                }
-            }).ToList()
-        };
-
-        return Ok(ret);
     }
 
 }

@@ -79,4 +79,13 @@ public class UsersController : ControllerBase
             ).ToList()
         });
     }
+
+    [HttpPatch("{Id}")]
+    public async Task<ActionResult<UserResponse>> Update([FromRoute] string Id, UserRequestForUpdate request)
+    {
+        return null;
+    }
+
+
+    //[HttpDelete("{ID}")]
 }
