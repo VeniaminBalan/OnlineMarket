@@ -58,6 +58,8 @@ public class UsersController : ControllerBase
         if (user.Roles.FirstOrDefault(r => r.Name == Roles.Models.Roles.Seller.ToString()) != null)
             return BadRequest("user already have seller role");
         
+        //--------------------------------------------------------------------------------------------------//
+        
         var memberRole = await roleRepo.DbSet
             .FirstOrDefaultAsync(x => x.Name == Roles.Models.Roles.Seller.ToString());
         if (memberRole is null) return NotFound("Member role does not exist");

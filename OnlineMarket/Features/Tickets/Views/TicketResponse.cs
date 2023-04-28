@@ -6,4 +6,5 @@ public class TicketResponse
     public string UserId { get; set; }
     public bool isProcessed { get; set; }
     public DateTime? ProcessedDate { get; set; }
+    public DateTime Created { get; set; }
 }

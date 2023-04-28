@@ -14,7 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<ProductModel> Products { get; set;}
     public DbSet<UserModel> Users { get; set;}
     public DbSet<RoleModel> Roles { get; set;}
-    public DbSet<ChartModel> Charts { get; set;}
+    public DbSet<CartModel> Charts { get; set;}
     public DbSet<TicketModel> Tickets { get; set;}
     
 }

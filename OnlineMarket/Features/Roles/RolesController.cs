@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMarket.DataBase;
 using OnlineMarket.Features.Roles.Models;
 using OnlineMarket.Features.Roles.Views;
+using OnlineMarket.Features.Users.Models;
 using StudentUptBackend.Database;
 
 namespace OnlineMarket.Features.Roles;
@@ -12,10 +13,12 @@ namespace OnlineMarket.Features.Roles;
 public class RolesController : ControllerBase
 {
     private readonly IRepository<RoleModel> repository;
+    private readonly IRepository<UserModel> userRepo;
     
-    public RolesController(IRepository<RoleModel> repository)
+    public RolesController(IRepository<RoleModel> repository, IRepository<UserModel> userRepo)
     {
         this.repository = repository;
+        this.userRepo = userRepo;
 
     }
 
