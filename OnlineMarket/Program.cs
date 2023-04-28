@@ -1,11 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineMarket.DataBase;
+using OnlineMarket.Utils.Services;
 using StudentUptBackend.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IUriService>(o =>
+{
+    var accessor = o.GetRequiredService<IHttpContextAccessor>();
+    var request = accessor.HttpContext.Request;
+    var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+    return new UriService(uri);
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -21,6 +29,7 @@ builder.Services.AddCors(o =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
 
 var app = builder.Build();
 

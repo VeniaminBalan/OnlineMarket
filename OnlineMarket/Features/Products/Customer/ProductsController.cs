@@ -6,6 +6,10 @@ using OnlineMarket.Features.Comments.View;
 using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
 using OnlineMarket.Features.Users.Views;
+using OnlineMarket.Utils.Filter;
+using OnlineMarket.Utils.Helpers;
+using OnlineMarket.Utils.Services;
+using OnlineMarket.Utils.Wrappers;
 using StudentUptBackend.Database;
 
 namespace OnlineMarket.Features.Products;
@@ -14,23 +18,31 @@ namespace OnlineMarket.Features.Products;
 [Route("products")]
 public class ProductsController : ControllerBase
 {
-    private readonly AppDbContext _appDbContext;
     private readonly IRepository<ProductModel> productRepo;
+    private readonly IUriService _uriService;
 
-    public ProductsController(AppDbContext appDbContext, IRepository<ProductModel> productRepo)
+    public ProductsController(IRepository<ProductModel> productRepo,
+        IUriService uriService)
     {
-        _appDbContext = appDbContext;
         this.productRepo = productRepo;
+        _uriService = uriService;
     }
     
     // get all available products
     [HttpGet]
-    public async Task<ActionResult<ProductsResponse>> Get()
+    public async Task<ActionResult<ProductsResponse>> Get([FromQuery] PaginationFilter filter)
     {
+        var validfilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+        var route = Request.Path.Value;
+
         var products = await productRepo.DbSet
             .Include(s => s.Seller)
             .Where(p=>p.Display == true)
+            .Skip((validfilter.PageNumber - 1) * validfilter.PageSize) //
+            .Take(validfilter.PageSize) //
             .ToListAsync();
+
+        var totalRecords = await productRepo.DbSet.CountAsync();
         
         var res = products.Select(p => new ProductsResponse
         {
@@ -47,9 +59,9 @@ public class ProductsController : ControllerBase
                 Email = p.Seller.Email,
                 Name = p.Seller.Name
             }
-        });
-
-        return Ok(res);
+        }).ToList();
+        var pagedResponse = PaginationHelper.CreatePagedReponse<ProductsResponse>(res, validfilter, totalRecords, _uriService, route);
+        return Ok(pagedResponse);
     }
     
     //get product by id
@@ -80,7 +92,7 @@ public class ProductsController : ControllerBase
             }
         };
 
-        return Ok(res);
+        return Ok(new Response<ProductsResponse>(res));
     }
 
 }
