@@ -7,6 +7,9 @@ using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
 using OnlineMarket.Features.Roles.Views;
 using OnlineMarket.Features.Users.Views;
+using OnlineMarket.Utils.Filter;
+using OnlineMarket.Utils.Helpers;
+using OnlineMarket.Utils.Services;
 using StudentUptBackend.Database;
 
 namespace OnlineMarket.Features.Admin;
@@ -17,11 +20,15 @@ public class AdminController : ControllerBase
 {
     private readonly AppDbContext _appDbContext;
     private readonly IRepository<ProductModel> productRepo;
+    private readonly IUriService _uriService;
 
-    public AdminController(AppDbContext appDbContext, IRepository<ProductModel> productRepo)
+    public AdminController(AppDbContext appDbContext, IRepository<ProductModel> productRepo,
+        IUriService uriService)
     {
         _appDbContext = appDbContext;
         this.productRepo = productRepo;
+        _uriService = uriService;
+        
     }
     
     

@@ -24,7 +24,7 @@ public class TicketService
 
         var ticket = new TicketModel
         {
-            UserId = user.Id,
+            User = user,
             isProcessed = false,
             ProcessedDate = null
         };

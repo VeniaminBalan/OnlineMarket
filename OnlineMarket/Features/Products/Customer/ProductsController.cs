@@ -30,7 +30,8 @@ public class ProductsController : ControllerBase
     
     // get all available products
     [HttpGet]
-    public async Task<ActionResult<ProductsResponse>> Get([FromQuery] PaginationFilter filter)
+    public async Task<ActionResult<ProductsResponse>> Get(
+        [FromQuery] PaginationFilter filter)
     {
         var validfilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
         var route = Request.Path.Value;
@@ -42,7 +43,7 @@ public class ProductsController : ControllerBase
             .Take(validfilter.PageSize) //
             .ToListAsync();
 
-        var totalRecords = await productRepo.DbSet.CountAsync();
+        var totalRecords = await productRepo.DbSet.Where(p=>p.Display == true).CountAsync();
         
         var res = products.Select(p => new ProductsResponse
         {
@@ -60,13 +61,13 @@ public class ProductsController : ControllerBase
                 Name = p.Seller.Name
             }
         }).ToList();
-        var pagedResponse = PaginationHelper.CreatePagedReponse<ProductsResponse>(res, validfilter, totalRecords, _uriService, route);
-        return Ok(pagedResponse);
+        //var pagedResponse = PaginationHelper.CreatePagedReponse<ProductsResponse>(res, validfilter, totalRecords, _uriService, route);
+        return Ok(res);
     }
     
     //get product by id
     [HttpGet("{Id}")]
-    public async Task<ActionResult<ProductsResponse>>  Get([FromRoute] string Id)
+    public async Task<ActionResult<IEnumerable<ProductsResponse>>>  Get([FromRoute] string Id)
     {
         var product = productRepo.DbSet
             .Include(s=>s.Seller)
@@ -92,7 +93,7 @@ public class ProductsController : ControllerBase
             }
         };
 
-        return Ok(new Response<ProductsResponse>(res));
+        return Ok(res);
     }
 
 }

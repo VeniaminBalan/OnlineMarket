@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineMarket.Features.Roles.Models;
 using OnlineMarket.Features.Roles.Views;
+using OnlineMarket.Features.Tickets;
+using OnlineMarket.Features.Tickets.Models;
 using OnlineMarket.Features.Users.Models;
 using OnlineMarket.Features.Users.Utils;
 using OnlineMarket.Features.Users.Views;
@@ -16,11 +18,15 @@ public class AuthController : ControllerBase
 {
     private readonly IRepository<UserModel> userRepo;
     private readonly IRepository<RoleModel> roleRepo;
+    private readonly IRepository<TicketModel> ticketsRepo;
 
-    public AuthController(IRepository<UserModel> userRepo, IRepository<RoleModel> roleRepo)
+    public AuthController(IRepository<UserModel> userRepo, 
+        IRepository<RoleModel> roleRepo,
+        IRepository<TicketModel> ticketsRepo)
     {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
+        this.ticketsRepo = ticketsRepo;
     }
 
     [HttpPost]
@@ -48,7 +54,12 @@ public class AuthController : ControllerBase
         };
 
         user = await userRepo.AddAsync(user);
-        
+        if (request.SellerRequest)
+        {
+            var ticketService = new TicketService(ticketsRepo,userRepo);
+            await ticketService.CreateTicket(user.Id);
+        }
+
         var res = new UserResponse
         {
             Id = user.Id,

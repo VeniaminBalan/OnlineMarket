@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMarket", "OnlineMarket\OnlineMarket.csproj", "{CE0E1C6A-4B9A-4AD0-B5A4-785ED2353251}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMarket.tests", "OnlineMarket.tests\OnlineMarket.tests.csproj", "{6A0A82DB-9513-47EF-83C6-E70784E75672}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{CE0E1C6A-4B9A-4AD0-B5A4-785ED2353251}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE0E1C6A-4B9A-4AD0-B5A4-785ED2353251}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE0E1C6A-4B9A-4AD0-B5A4-785ED2353251}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A0A82DB-9513-47EF-83C6-E70784E75672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A0A82DB-9513-47EF-83C6-E70784E75672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A0A82DB-9513-47EF-83C6-E70784E75672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A0A82DB-9513-47EF-83C6-E70784E75672}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

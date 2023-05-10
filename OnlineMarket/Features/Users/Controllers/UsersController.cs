@@ -29,6 +29,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<UserResponse>> Get()
     {
         var users = await userRepo.DbSet
+            //.Where(u=>u.Name.Contains(s) | u.Email.Contains(s))
             .Include(r => r.Roles)
             .Select(
                 user => new UserResponse
@@ -85,9 +86,16 @@ public class UsersController : ControllerBase
     [HttpPatch("{Id}")]
     public async Task<ActionResult<UserResponse>> Update([FromRoute] string Id, UserRequestForUpdate request)
     {
-        return null;
+        return BadRequest("sorry this endpoint was not implemented\n contact admin");
     }
 
 
-    //[HttpDelete("{ID}")]
+    [HttpDelete("{Id}")]
+    public async Task<ActionResult> Delete([FromRoute] string Id)
+    {
+        var user = await userRepo.DeleteAsync(Id);
+        if (user is null) return NotFound("user not found");
+
+        return Ok($"user with id={user.Id} was successfully deleted");
+    }
 }

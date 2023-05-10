@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OnlineMarket.DataBase;
 using OnlineMarket.Features.Roles;
 using OnlineMarket.Features.Roles.Models;
-using OnlineMarket.Features.Roles.Views;
 using OnlineMarket.Features.Tickets.Models;
 using OnlineMarket.Features.Tickets.Views;
 using OnlineMarket.Features.Users.Models;
+using OnlineMarket.Features.Users.Views;
 using StudentUptBackend.Database;
 
 namespace OnlineMarket.Features.Tickets;
@@ -39,12 +37,19 @@ public class TicketsController : ControllerBase
         var ticket = await ticketService.CreateTicket(Id);
         if (ticket is null) return NotFound("user not found");
 
+        var user =await userRepo.GetAsync(Id);
+
         var res = new TicketResponse()
         {
             Id = ticket.Id,
             ProcessedDate = ticket.ProcessedDate,
             isProcessed = ticket.isProcessed,
-            UserId = ticket.UserId,
+            User = new UserResponse
+            {
+              Id = user.Id,
+              Email = user.Email,
+              Name = user.Name
+            },
             Created = ticket.Created
         };
         return Ok(res);
@@ -54,13 +59,19 @@ public class TicketsController : ControllerBase
     public async Task<ActionResult<IEnumerable<TicketResponse>>> Get()
     {
         var tickets = await ticketsRepo.DbSet
+            .Include(t=>t.User)
             .Where(t=>t.isProcessed == false)
             .Select(ticket => new TicketResponse
             {
                 Id = ticket.Id,
                 ProcessedDate = ticket.ProcessedDate,
                 isProcessed = ticket.isProcessed,
-                UserId = ticket.UserId,
+                User = new UserResponse
+                {
+                    Id = ticket.User.Id,
+                    Email = ticket.User.Email,
+                    Name = ticket.User.Name
+                },
                 Created = ticket.Created
             }).ToListAsync();
 
@@ -70,11 +81,13 @@ public class TicketsController : ControllerBase
     [HttpPut("{ticketId}")]
     public async Task<ActionResult<TicketResponse>> AddSellerRole([FromRoute] string ticketId)
     {
-        var ticket = await ticketsRepo.GetAsync(ticketId);
+        var ticket = await ticketsRepo.DbSet
+            .Include(t => t.User)
+            .FirstOrDefaultAsync(t => t.Id == ticketId);
         if (ticket is null) return NotFound("ticket not found");
 
         RoleService roleService = new RoleService(roleRepo, userRepo);
-        await roleService.AddSellerRole(ticket.UserId);
+        await roleService.AddSellerRole(ticket.User.Id);
 
         ticket.isProcessed = true;
         ticket.ProcessedDate = DateTime.UtcNow;
@@ -86,7 +99,12 @@ public class TicketsController : ControllerBase
             Id = ticket.Id,
             ProcessedDate = ticket.ProcessedDate,
             isProcessed = ticket.isProcessed,
-            UserId = ticket.UserId,
+            User = new UserResponse
+            {
+                Id = ticket.User.Id,
+                Email = ticket.User.Email,
+                Name = ticket.User.Name
+            },
             Created = ticket.Created
         });
     }

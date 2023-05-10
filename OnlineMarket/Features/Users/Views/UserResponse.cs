@@ -1,5 +1,4 @@
-﻿using OnlineMarket.Features.Roles.Models;
-using OnlineMarket.Features.Roles.Views;
+﻿using OnlineMarket.Features.Roles.Views;
 
 namespace OnlineMarket.Features.Users.Views;
 
