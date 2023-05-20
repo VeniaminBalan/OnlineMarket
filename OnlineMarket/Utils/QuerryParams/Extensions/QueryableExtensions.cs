@@ -1,4 +1,5 @@
 ﻿using OnlineMarket.Features.Admin.Views;
+using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
 using OnlineMarket.Utils.QuerryParams.Filters.Filter;
 using OnlineMarket.Utils.QuerryParams.Filters.SearchFilter;
@@ -30,24 +31,7 @@ public static class QueryableExtensions
         };
     }
 
-    public static List<ProductResponseForAdmin> Search(List<ProductResponseForAdmin> list, ISearchParams searchParams)
-    {
-        if (searchParams.Search is null)
-        {
-            return list;
-        }
-
-        var search = searchParams.Search.ToLower();
-
-        var ret = list.Where(p =>
-        {
-            return p.Name.ToLower().Contains(search);
-        }).ToList();
-
-        return ret;
-    }
-    
-    public static List<ProductsResponse> Search(List<ProductsResponse> list, ISearchParams searchParams)
+    public static List<ProductModel> Search(List<ProductModel> list, ISearchParams searchParams)
     {
         if (searchParams.Search is null)
         {

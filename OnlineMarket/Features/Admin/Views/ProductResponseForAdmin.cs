@@ -4,7 +4,7 @@ using OnlineMarket.Features.Users.Views;
 
 namespace OnlineMarket.Features.Admin.Views;
 
-public class ProductResponseForAdmin : IProductResponse
+public class ProductResponseForAdmin
 {
     public string Id { get; set; }
     public UserResponseForProducts Seller { get; set; }

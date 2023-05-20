@@ -5,7 +5,7 @@ using OnlineMarket.Features.Users.Views;
 
 namespace OnlineMarket.Features.Products.Views;
 
-public class ProductsResponse : IProductResponse
+public class ProductsResponse
 {
     public string Id { get; set; }
     public string Name { get; set; }

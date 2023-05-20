@@ -20,7 +20,10 @@ public class HashPassword
     }
     public HashPassword(string _password)
     {
-        byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); // divide by 8 to convert bits to bytes
+        if (_password is "")
+            throw new Exception("password can't be empty"); 
+                
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); // divide by 8 to convert bits to bytes
         var returnSalt = Convert.ToBase64String(salt);
 
         // derive a 256-bit subkey (use HMACSHA256 with 100,000 iterations)

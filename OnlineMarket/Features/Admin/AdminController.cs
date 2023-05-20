@@ -47,6 +47,12 @@ public class AdminController : ControllerBase
             .Include(p => p.Seller)
             .Include(p=>p.Comments)
             .ToListAsync();
+        
+        products = QueryableExtensions.Search(products, searchParams);
+        products = QueryableExtensions.Sort(products, sortingParams).ToList();
+        products = products
+            .Skip((validfilter.PageNumber - 1) * validfilter.PageSize)
+            .Take(validfilter.PageSize).ToList();
 
         var res = products.Select(p => new ProductResponseForAdmin
         {
@@ -72,13 +78,7 @@ public class AdminController : ControllerBase
                 ProductId = c.Product.Id
             }).ToList()
         });
-        
-        res = QueryableExtensions.Search(res.ToList() , searchParams);
-        res = QueryableExtensions.Sort(res.ToList(), sortingParams);
-        
-        res = res.Skip((validfilter.PageNumber - 1) * validfilter.PageSize)
-            .Take(validfilter.PageSize);
-        
+
         return Ok(res);
     }
 

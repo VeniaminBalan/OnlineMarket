@@ -34,16 +34,19 @@ public class ProductsController : ControllerBase
         [FromQuery] SortingParams sortingParams,
         [FromQuery] PaginationFilter filter)
     {
-        //var validfilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-        //var route = Request.Path.Value;
+        var validfilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
 
         var products = await productRepo.DbSet
             .Include(s => s.Seller)
             .Where(p=>p.Display == true)
             .ToListAsync();
-
-        var totalRecords = await productRepo.DbSet.Where(p=>p.Display == true).CountAsync();
         
+        products = QueryableExtensions.Search(products, searchParams);
+        products = QueryableExtensions.Sort(products, sortingParams).ToList();
+        products = products
+            .Skip((validfilter.PageNumber - 1) * validfilter.PageSize)
+            .Take(validfilter.PageSize).ToList();
+
         var res = products.Select(p => new ProductsResponse
         {
             Id = p.Id,
@@ -61,10 +64,6 @@ public class ProductsController : ControllerBase
             }
         });
 
-        res = QueryableExtensions.Search(res.ToList() , searchParams);
-        res = QueryableExtensions.Sort(res.ToList(), sortingParams);
-
-        //var pagedResponse = PaginationHelper.CreatePagedReponse<ProductsResponse>(res, validfilter, totalRecords, _uriService, route);
         return Ok(res);
     }
     

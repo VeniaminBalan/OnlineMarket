@@ -2,7 +2,7 @@
 
 namespace OnlineMarket.Features.Products.Views;
 
-public class ProductResponseForCart : IProductResponse
+public class ProductResponseForCart
 {
     public string Id { get; set; }
     public string Name { get; set; }
