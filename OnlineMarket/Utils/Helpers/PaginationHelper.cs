@@ -1,4 +1,4 @@
-﻿using OnlineMarket.Utils.Filter;
+﻿using OnlineMarket.Utils.QuerryParams.Filters.PaginationFilter;
 using OnlineMarket.Utils.Services;
 using OnlineMarket.Utils.Wrappers;
 

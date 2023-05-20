@@ -7,7 +7,7 @@ using OnlineMarket.Features.Roles.Views;
 using OnlineMarket.Features.Users.Models;
 using OnlineMarket.Features.Users.Utils;
 using OnlineMarket.Features.Users.Views;
-using StudentUptBackend.Database;
+using OnlineMarket.Utils.Repository;
 
 namespace OnlineMarket.Features.Users;
 

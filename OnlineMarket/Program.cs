@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineMarket.DataBase;
+using OnlineMarket.Utils.Repository;
 using OnlineMarket.Utils.Services;
-using StudentUptBackend.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 

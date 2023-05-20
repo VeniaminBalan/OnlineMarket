@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OnlineMarket.DataBase;
-using OnlineMarket.Features.Comments.Models;
-using OnlineMarket.Features.Comments.View;
+using Microsoft.EntityFrameworkCore.Internal;
 using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
 using OnlineMarket.Features.Users.Views;
-using OnlineMarket.Utils.Filter;
-using OnlineMarket.Utils.Helpers;
+using OnlineMarket.Utils.QuerryParams.Filters.PaginationFilter;
+using OnlineMarket.Utils.QuerryParams.Filters.SearchFilter;
+using OnlineMarket.Utils.QuerryParams.Filters.SortingFilter;
+using OnlineMarket.Utils.Repository;
 using OnlineMarket.Utils.Services;
-using OnlineMarket.Utils.Wrappers;
-using StudentUptBackend.Database;
+using QueryableExtensions = OnlineMarket.Utils.QuerryParams.Extensions.QueryableExtensions;
 
 namespace OnlineMarket.Features.Products;
 
@@ -30,17 +29,17 @@ public class ProductsController : ControllerBase
     
     // get all available products
     [HttpGet]
-    public async Task<ActionResult<ProductsResponse>> Get(
+    public async Task<ActionResult<IEnumerable<ProductsResponse>>> Get(
+        [FromQuery] SearchParams searchParams,
+        [FromQuery] SortingParams sortingParams,
         [FromQuery] PaginationFilter filter)
     {
-        var validfilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-        var route = Request.Path.Value;
+        //var validfilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+        //var route = Request.Path.Value;
 
         var products = await productRepo.DbSet
             .Include(s => s.Seller)
             .Where(p=>p.Display == true)
-            .Skip((validfilter.PageNumber - 1) * validfilter.PageSize) //
-            .Take(validfilter.PageSize) //
             .ToListAsync();
 
         var totalRecords = await productRepo.DbSet.Where(p=>p.Display == true).CountAsync();
@@ -60,7 +59,11 @@ public class ProductsController : ControllerBase
                 Email = p.Seller.Email,
                 Name = p.Seller.Name
             }
-        }).ToList();
+        });
+
+        res = QueryableExtensions.Search(res.ToList() , searchParams);
+        res = QueryableExtensions.Sort(res.ToList(), sortingParams);
+
         //var pagedResponse = PaginationHelper.CreatePagedReponse<ProductsResponse>(res, validfilter, totalRecords, _uriService, route);
         return Ok(res);
     }

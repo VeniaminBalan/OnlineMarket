@@ -3,7 +3,7 @@ using OnlineMarket.Features.Comments.Models;
 using OnlineMarket.Features.Comments.View;
 using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Users.Models;
-using StudentUptBackend.Database;
+using OnlineMarket.Utils.Repository;
 
 namespace OnlineMarket.Features.Comments;
 

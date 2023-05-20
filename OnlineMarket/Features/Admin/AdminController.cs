@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using OnlineMarket.DataBase;
 using OnlineMarket.Features.Admin.Views;
 using OnlineMarket.Features.Comments.View;
 using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
-using OnlineMarket.Features.Roles.Views;
 using OnlineMarket.Features.Users.Views;
-using OnlineMarket.Utils.Filter;
-using OnlineMarket.Utils.Helpers;
+using OnlineMarket.Utils.QuerryParams.Filters.PaginationFilter;
+using OnlineMarket.Utils.QuerryParams.Filters.SearchFilter;
+using OnlineMarket.Utils.QuerryParams.Filters.SortingFilter;
+using OnlineMarket.Utils.Repository;
 using OnlineMarket.Utils.Services;
-using StudentUptBackend.Database;
+using QueryableExtensions = OnlineMarket.Utils.QuerryParams.Extensions.QueryableExtensions;
 
 namespace OnlineMarket.Features.Admin;
 
@@ -34,13 +36,18 @@ public class AdminController : ControllerBase
     
     [HttpGet]
     [Route("product")]
-    public async Task<ActionResult<IEnumerable<ProductResponseForAdmin>>> GetAllProducts()
+    public async Task<ActionResult<IEnumerable<ProductResponseForAdmin>>> GetAllProducts(
+        [FromQuery] SearchParams searchParams,
+        [FromQuery] PaginationFilter paginatorFilter,
+        [FromQuery] SortingParams sortingParams)
     {
+        var validfilter = new PaginationFilter(paginatorFilter.PageNumber, paginatorFilter.PageSize);
+        
         var products = await productRepo.DbSet
             .Include(p => p.Seller)
             .Include(p=>p.Comments)
             .ToListAsync();
-        
+
         var res = products.Select(p => new ProductResponseForAdmin
         {
             Id = p.Id,
@@ -56,7 +63,7 @@ public class AdminController : ControllerBase
                 Email = p.Seller.Email,
                 Name = p.Seller.Name
             },
-            Comments = p.Comments.Select(c=>new CommentResponse
+            Comments = p.Comments.Select(c => new CommentResponse
             {
                 Id = c.Id,
                 Text = c.Text,
@@ -65,45 +72,12 @@ public class AdminController : ControllerBase
                 ProductId = c.Product.Id
             }).ToList()
         });
-
-        return Ok(res);
-    }
-    
-    [HttpGet("product{Id}")]
-    public async Task<ActionResult<ProductResponseForAdmin>> Get([FromRoute]string Id)
-    {
-        var product = await productRepo.DbSet
-            .Include(p => p.Seller)
-            .Include(p=>p.Comments)
-            .ThenInclude(c=>c.User)
-            .FirstOrDefaultAsync(p=>p.Id ==Id);
-
-        if (product is null) return NotFound("product not found");
         
-        var res =new ProductResponseForAdmin
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Description = product.Description,
-            IsNegotiable = product.IsNegotiable,
-            Price = product.Price,
-            Quantity = product.Quantity,
-            Display = product.Display,
-            Seller = new UserResponseForProducts
-            {
-                Id = product.Seller.Id,
-                Email = product.Seller.Email,
-                Name = product.Seller.Name
-            },
-            Comments = product.Comments.Select(c=>new CommentResponse
-            {
-                Id = c.Id,
-                Text = c.Text,
-                Created = c.Created,
-                UserId = c.User.Id,
-                ProductId = c.Product.Id
-            }).ToList()
-        };
+        res = QueryableExtensions.Search(res.ToList() , searchParams);
+        res = QueryableExtensions.Sort(res.ToList(), sortingParams);
+        
+        res = res.Skip((validfilter.PageNumber - 1) * validfilter.PageSize)
+            .Take(validfilter.PageSize);
         
         return Ok(res);
     }

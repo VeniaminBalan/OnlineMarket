@@ -1,9 +1,10 @@
 ﻿using OnlineMarket.Features.Comments.View;
+using OnlineMarket.Features.Products.Views;
 using OnlineMarket.Features.Users.Views;
 
 namespace OnlineMarket.Features.Admin.Views;
 
-public class ProductResponseForAdmin
+public class ProductResponseForAdmin : IProductResponse
 {
     public string Id { get; set; }
     public UserResponseForProducts Seller { get; set; }

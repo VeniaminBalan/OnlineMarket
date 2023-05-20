@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMarket.Base;
 using OnlineMarket.DataBase;
 
-namespace StudentUptBackend.Database;
+namespace OnlineMarket.Utils.Repository;
 
 public class Repository<T> : IRepository<T> where T : class, IModel
 {

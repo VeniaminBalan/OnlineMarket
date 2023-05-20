@@ -5,7 +5,7 @@ using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
 using OnlineMarket.Features.Users.Models;
 using OnlineMarket.Features.Users.Views;
-using StudentUptBackend.Database;
+using OnlineMarket.Utils.Repository;
 
 namespace OnlineMarket.Features.Charts;
 

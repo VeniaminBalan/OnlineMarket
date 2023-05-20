@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using OnlineMarket.Base;
 
-namespace StudentUptBackend.Database;
+namespace OnlineMarket.Utils.Repository;
 
 public interface IRepository<T> where T : class, IModel
 {

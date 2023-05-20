@@ -1,6 +1,6 @@
-﻿namespace OnlineMarket.Utils.Filter;
+﻿namespace OnlineMarket.Utils.QuerryParams.Filters.PaginationFilter;
 
-public class PaginationFilter
+public class PaginationFilter : IPaginationFilter
 {
     public int PageNumber { get; set; }
     public int PageSize { get; set; }

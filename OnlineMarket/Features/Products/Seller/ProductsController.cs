@@ -8,7 +8,7 @@ using OnlineMarket.Features.Products.Models;
 using OnlineMarket.Features.Products.Views;
 using OnlineMarket.Features.Users.Models;
 using OnlineMarket.Features.Users.Views;
-using StudentUptBackend.Database;
+using OnlineMarket.Utils.Repository;
 
 namespace OnlineMarket.Features.Products;
 
@@ -20,7 +20,7 @@ public class CustomerProductsController : ControllerBase
     private IRepository<UserModel> userRepo;
     private IRepository<CommentModel> commentRepo;
 
-    public CustomerProductsController(AppDbContext appDbContext, 
+    public CustomerProductsController(
         IRepository<ProductModel> productRepo, 
         IRepository<UserModel> userRepo,
         IRepository<CommentModel> commentRepo
