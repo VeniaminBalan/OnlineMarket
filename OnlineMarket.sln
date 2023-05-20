@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMarket", "OnlineMarke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMarket.UnitTest", "OnlineMarket.UnitTest\OnlineMarket.UnitTest.csproj", "{6D7CE3C9-0ED6-47C1-B76A-7D542ACEAB12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMarket.IntegrationTest", "OnlineMarket.IntegrationTest\OnlineMarket.IntegrationTest.csproj", "{58F3BBD8-C0C6-4126-B6D3-218886B32B67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{6D7CE3C9-0ED6-47C1-B76A-7D542ACEAB12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D7CE3C9-0ED6-47C1-B76A-7D542ACEAB12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D7CE3C9-0ED6-47C1-B76A-7D542ACEAB12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58F3BBD8-C0C6-4126-B6D3-218886B32B67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58F3BBD8-C0C6-4126-B6D3-218886B32B67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58F3BBD8-C0C6-4126-B6D3-218886B32B67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58F3BBD8-C0C6-4126-B6D3-218886B32B67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

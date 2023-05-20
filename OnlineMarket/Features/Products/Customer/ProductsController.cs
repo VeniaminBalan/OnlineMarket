@@ -18,13 +18,11 @@ namespace OnlineMarket.Features.Products;
 public class ProductsController : ControllerBase
 {
     private readonly IRepository<ProductModel> productRepo;
-    private readonly IUriService _uriService;
+    //private readonly IUriService _uriService;
 
-    public ProductsController(IRepository<ProductModel> productRepo,
-        IUriService uriService)
+    public ProductsController(IRepository<ProductModel> productRepo)
     {
         this.productRepo = productRepo;
-        _uriService = uriService;
     }
     
     // get all available products
